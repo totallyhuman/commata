@@ -24,7 +24,11 @@ commands = {
     '*': lambda stack: stack.push(stack.pop() ** stack.pop()),
     '√': lambda stack: stack.push(math.sqrt(stack.pop())),
     '␣': lambda stack: print(stack.pop(), end = ''),
-    '↓': lambda stack: print(chr(stack.pop()), end = '')
+    '↓': lambda stack: print(chr(stack.pop()), end = ''),
+    '↑': lambda stack: stack.pop(),
+    '¬': lambda stack: stack.push(int(not stack.pop())),
+    '∧': lambda stack: stack.push(int(stack.pop() and stack.pop())),
+    '∨': lambda stack: stack.push(int(stack.pop() or stack.pop()))
 }
 
 class UnknownCommand(Exception):
