@@ -7,9 +7,22 @@ Creative Name
 A language that probably hopefully does something.
 """
 
+import argparse
 import collections
+import math
 import re
 
+commands = {
+    '+': lambda stack: stack.push(stack.pop() + stack.pop()),
+    '-': lambda stack: stack.push(stack.pop() - stack.pop()),
+    '×': lambda stack: stack.push(stack.pop() * stack.pop()),
+    '÷': lambda stack: stack.push(stack.pop() / stack.pop()),
+    '%': lambda stack: stack.push(stack.pop() % stack.pop()),
+    '*': lambda stack: stack.push(stack.pop() ** stack.pop()),
+    '√': lambda stack: stack.push(math.sqrt(stack.pop())),
+    '␣': lambda stack: print(stack.pop(), end = ''),
+    '↓': lambda stack: print(chr(stack.pop()), end = '')
+}
 
 class UnknownCommand(Exception):
     """An Exception that is raised on an invalid command."""
@@ -17,6 +30,24 @@ class UnknownCommand(Exception):
     def __init__(self, command):
         super(UnknownCommand,
               self).__init__('Unknown command: {}'.format(command))
+
+
+class Stack:
+
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        return self.items.pop()
+
+    def peek(self):
+        return self.items[-1]
+
+    def __len__(self):
+        return len(self.items)
 
 
 def tokenize(code):
@@ -30,10 +61,9 @@ def tokenize(code):
     """
     Token = collections.namedtuple('Token', ['type', 'value'])
 
-    commands = ['+', '-', '*', '/', '%', '^']
     token_specs = [
         ('number', r'\d+(\.\d*)?'),
-        ('string', r'(["\'])((\\{2})*|([\s\S]*?[^\\](\\{2})*))\1'),
+        ('string', r'(?P<q>[\'"])([^\\]|\\[\s\S])*?(?P=q)'),
         ('noop', r'[ \t\n]+'),
         ('command', r'.')
     ]
@@ -55,3 +85,25 @@ def tokenize(code):
             tokens.append(Token(_type, value))
 
     return tokens
+
+
+def run(code):
+    tokens = tokenize(code)
+    stack = Stack()
+
+    for token in tokens:
+        if token[0] == 'number':
+            try:
+                stack.push(int(token[1]))
+            except ValueError:
+                stack.push(float(token[1]))
+        elif token[0] == 'string':
+            for i in token[1][1:-1]:
+                stack.push(ord(i))
+        else:
+            commands[token[1]](stack)
+
+    try:
+        print('\n{}'.format(stack.pop()))
+    except IndexError:
+        pass
