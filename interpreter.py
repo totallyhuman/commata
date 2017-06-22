@@ -5,6 +5,9 @@
 Creative Name
 
 A language that probably hopefully does something.
+
+Sumant Bhaskaruni
+v0.1.0 (basically, don't use it)
 """
 
 import argparse
