@@ -28,7 +28,14 @@ commands = {
     '↑': lambda stack: stack.pop(),
     '¬': lambda stack: stack.push(int(not stack.pop())),
     '∧': lambda stack: stack.push(int(stack.pop() and stack.pop())),
-    '∨': lambda stack: stack.push(int(stack.pop() or stack.pop()))
+    '∨': lambda stack: stack.push(int(stack.pop() or stack.pop())),
+    'i': lambda stack: stack.push(int(stack.pop())),
+    'f': lambda stack: stack.push(float(stack.pop())),
+    's': lambda stack: stack.push(str(stack.pop())),
+    'c': lambda stack: stack.push(chr(stack.pop())),
+    '⊢': lambda stack: stack.push(stack.pop()[stack.pop():]),
+    '⊣': lambda stack: stack.push(stack.pop()[:stack.pop()]),
+    '⟛': lambda stack: stack.push(stack.pop()[::stack.pop()])
 }
 
 class UnknownCommand(Exception):
@@ -94,9 +101,17 @@ def tokenize(code):
     return tokens
 
 
-def run(code):
+def run(code, args):
     tokens = tokenize(code)
     stack = Stack()
+
+    for arg in args:
+        if re.match(r'-?\d+$', arg):
+            stack.push(int(arg))
+        elif re.match(r'-?\d+(\.\d*)?$', arg):
+            stack.push(float(arg))
+        else:
+            stack.push(arg)
 
     for token in tokens:
         if token[0] == 'number':
@@ -119,10 +134,12 @@ def main():
         description = 'An interpreter for the Creative Name language.')
     parser.add_argument('file', help = 'program read from script file',
                         type = open)
+    parser.add_argument('args', help = 'arguments for the script',
+                        nargs = argparse.REMAINDER)
 
-    args = parser.parse_args()
-    with args.file as f:
-        run(f.read())
+    arguments = parser.parse_args()
+    with arguments.file as f:
+        run(f.read(), arguments.args)
 
 
 if __name__ == '__main__':
