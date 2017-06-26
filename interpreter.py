@@ -69,7 +69,7 @@ def tokenize(code):
     Token = collections.namedtuple('Token', ['type', 'value'])
 
     token_specs = [
-        ('number', r'\d+(\.\d*)?'),
+        ('number', r'-?\d+(\.\d*)?'),
         ('string', r'(?P<q>[\'"])([^\\]|\\[\s\S])*?(?P=q)'),
         ('noop', r'[ \t\n]+'),
         ('command', r'.')
@@ -105,12 +105,25 @@ def run(code):
             except ValueError:
                 stack.push(float(token[1]))
         elif token[0] == 'string':
-            for i in token[1][1:-1]:
-                stack.push(ord(i))
+            stack.push(token[1][1:-1])
         else:
             commands[token[1]](stack)
 
     try:
-        print('\n{}'.format(stack.pop()))
+        print(stack.pop())
     except IndexError:
-        pass
+        print()
+
+def main():
+    parser = argparse.ArgumentParser(
+        description = 'An interpreter for the Creative Name language.')
+    parser.add_argument('file', help = 'program read from script file',
+                        type = open)
+
+    args = parser.parse_args()
+    with args.file as f:
+        run(f.read())
+
+
+if __name__ == '__main__':
+    main()
