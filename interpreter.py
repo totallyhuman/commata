@@ -113,7 +113,7 @@ def tokenize(code):
     Returns:
         tokens (list): a list of all the tokens in the code
     """
-    Token = collections.namedtuple('Token', ['type', 'value'])
+s    Token = collections.namedtuple('Token', ['type', 'value'])
 
     token_specs = [
         ('string', r'"([^\\]|\\[\s\S])*?"'),
@@ -157,16 +157,16 @@ def run(code, args):
     for token in tokens:
         if token[0] == 'number':
             try:
-                stack[stk_no].push(int(token[1]))
+                stacks[stk_no].push(int(token[1]))
             except ValueError:
-                stack[stk_no].push(float(token[1]))
+                stacks[stk_no].push(float(token[1]))
         elif token[0] == 'string':
-            stack[stk_no].push(token[1][1:-1])
+            stacks[stk_no].push(token[1][1:-1])
         else:
             commands[token[1]](stacks, stk_no, stacks[stk_no])
 
     try:
-        print(stack.pop())
+        print(stacks.pop())
     except IndexError:
         print()
 
