@@ -7,7 +7,7 @@ Creative Name
 A language that probably hopefully does something.
 
 Sumant Bhaskaruni
-v0.1.0 (basically, don't use it)
+v0.2.0 (basically, don't use it)
 """
 
 import argparse
@@ -16,36 +16,66 @@ import math
 import re
 
 commands = {
-    '+': lambda stack: stack.push(stack.pop() + stack.pop()),
-    '-': lambda stack: stack.push(stack.pop() - stack.pop()),
-    '×': lambda stack: stack.push(stack.pop() * stack.pop()),
-    '÷': lambda stack: stack.push(stack.pop() / stack.pop()),
-    '%': lambda stack: stack.push(stack.pop() % stack.pop()),
-    '*': lambda stack: stack.push(stack.pop() ** stack.pop()),
-    '√': lambda stack: stack.push(math.sqrt(stack.pop())),
-    '↓': lambda stack: print(stack.pop(), end = ''),
-    '↑': lambda stack: stack.pop(),
-    '¬': lambda stack: stack.push(int(not stack.pop())),
-    '∧': lambda stack: stack.push(int(stack.pop() and stack.pop())),
-    '∨': lambda stack: stack.push(int(stack.pop() or stack.pop())),
-    'i': lambda stack: stack.push(int(stack.pop())),
-    'f': lambda stack: stack.push(float(stack.pop())),
-    's': lambda stack: stack.push(str(stack.pop())),
-    'c': lambda stack: stack.push(chr(stack.pop())),
-    'o': lambda stack: stack.push(ord(stack.pop())),
-    '⊢': lambda stack: stack.push(stack.pop()[stack.pop():]),
-    '⊣': lambda stack: stack.push(stack.pop()[:stack.pop()]),
-    '⟛': lambda stack: stack.push(stack.pop()[::stack.pop()]),
-    '&': lambda stack: stack.push(stack.pop() & stack.pop()),
-    '|': lambda stack: stack.push(stack.pop() | stack.pop()),
-    '^': lambda stack: stack.push(stack.pop() ^ stack.pop()),
-    '~': lambda stack: stack.push(~ stack.pop()),
-    '«': lambda stack: stack.push(stack.pop() << stack.pop()),
-    '»': lambda stack: stack.push(stack.pop() >> stack.pop()),
-    ':': lambda stack: stack.push(stack.peek()),
-    '<': lambda stack: stack.push(stack.pop() < stack.pop()),
-    '>': lambda stack: stack.push(stack.pop() > stack.pop()),
-    '=': lambda stack: stack.push(stack.pop() == stack.pop())
+    '+':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() + stack.pop()),
+    '-':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() - stack.pop()),
+    '×':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() * stack.pop()),
+    '÷':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() / stack.pop()),
+    '%':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() % stack.pop()),
+    '*':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() ** stack.pop()),
+    '√':
+        lambda stacks, stk_no, stack: stack.push(math.sqrt(stack.pop())),
+    '↓':
+        lambda stacks, stk_no, stack: print(stack.pop(), end = ''),
+    '↑':
+        lambda stacks, stk_no, stack: stack.pop(),
+    '¬':
+        lambda stacks, stk_no, stack: stack.push(int(not stack.pop())),
+    '∧':
+        lambda stacks, stk_no, stack: stack.push(int(stack.pop() and stack.pop())),
+    '∨':
+        lambda stacks, stk_no, stack: stack.push(int(stack.pop() or stack.pop())),
+    'i':
+        lambda stacks, stk_no, stack: stack.push(int(stack.pop())),
+    'f':
+        lambda stacks, stk_no, stack: stack.push(float(stack.pop())),
+    's':
+        lambda stacks, stk_no, stack: stack.push(str(stack.pop())),
+    'c':
+        lambda stacks, stk_no, stack: stack.push(chr(stack.pop())),
+    'o':
+        lambda stacks, stk_no, stack: stack.push(ord(stack.pop())),
+    '⊢':
+        lambda stacks, stk_no, stack: stack.push(stack.pop()[stack.pop():]),
+    '⊣':
+        lambda stacks, stk_no, stack: stack.push(stack.pop()[:stack.pop()]),
+    '⟛':
+        lambda stacks, stk_no, stack: stack.push(stack.pop()[::stack.pop()]),
+    '&':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() & stack.pop()),
+    '|':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() | stack.pop()),
+    '^':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() ^ stack.pop()),
+    '~':
+        lambda stacks, stk_no, stack: stack.push(~ stack.pop()),
+    '«':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() << stack.pop()),
+    '»':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() >> stack.pop()),
+    ':':
+        lambda stacks, stk_no, stack: stack.push(stack.peek()),
+    '<':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() < stack.pop()),
+    '>':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() > stack.pop()),
+    '=':
+        lambda stacks, stk_no, stack: stack.push(stack.pop() == stack.pop())
 }
 
 class UnknownCommand(Exception):
@@ -58,8 +88,8 @@ class UnknownCommand(Exception):
 
 class Stack:
 
-    def __init__(self):
-        self.items = []
+    def __init__(self, items = []):
+        self.items = items
 
     def push(self, item):
         self.items.append(item)
@@ -113,26 +143,27 @@ def tokenize(code):
 
 def run(code, args):
     tokens = tokenize(code)
-    stack = Stack()
+    stacks = [Stack()]
+    stk_no = 0
 
     for arg in args:
         if re.match(r'-?\d+$', arg):
-            stack.push(int(arg))
+            stacks[stk_no].push(int(arg))
         elif re.match(r'-?\d+(\.\d*)?$', arg):
-            stack.push(float(arg))
+            stacks[stk_no].push(float(arg))
         else:
-            stack.push(arg)
+            stacks[stk_no].push(arg)
 
     for token in tokens:
         if token[0] == 'number':
             try:
-                stack.push(int(token[1]))
+                stack[stk_no].push(int(token[1]))
             except ValueError:
-                stack.push(float(token[1]))
+                stack[stk_no].push(float(token[1]))
         elif token[0] == 'string':
-            stack.push(token[1][1:-1])
+            stack[stk_no].push(token[1][1:-1])
         else:
-            commands[token[1]](stack)
+            commands[token[1]](stacks, stk_no, stacks[stk_no])
 
     try:
         print(stack.pop())
