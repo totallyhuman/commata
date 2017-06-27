@@ -23,8 +23,7 @@ commands = {
     '%': lambda stack: stack.push(stack.pop() % stack.pop()),
     '*': lambda stack: stack.push(stack.pop() ** stack.pop()),
     '√': lambda stack: stack.push(math.sqrt(stack.pop())),
-    '␣': lambda stack: print(stack.pop(), end = ''),
-    '↓': lambda stack: print(chr(stack.pop()), end = ''),
+    '↓': lambda stack: print(stack.pop(), end = ''),
     '↑': lambda stack: stack.pop(),
     '¬': lambda stack: stack.push(int(not stack.pop())),
     '∧': lambda stack: stack.push(int(stack.pop() and stack.pop())),
@@ -33,9 +32,20 @@ commands = {
     'f': lambda stack: stack.push(float(stack.pop())),
     's': lambda stack: stack.push(str(stack.pop())),
     'c': lambda stack: stack.push(chr(stack.pop())),
+    'o': lambda stack: stack.push(ord(stack.pop())),
     '⊢': lambda stack: stack.push(stack.pop()[stack.pop():]),
     '⊣': lambda stack: stack.push(stack.pop()[:stack.pop()]),
-    '⟛': lambda stack: stack.push(stack.pop()[::stack.pop()])
+    '⟛': lambda stack: stack.push(stack.pop()[::stack.pop()]),
+    '&': lambda stack: stack.push(stack.pop() & stack.pop()),
+    '|': lambda stack: stack.push(stack.pop() | stack.pop()),
+    '^': lambda stack: stack.push(stack.pop() ^ stack.pop()),
+    '~': lambda stack: stack.push(~ stack.pop()),
+    '«': lambda stack: stack.push(stack.pop() << stack.pop()),
+    '»': lambda stack: stack.push(stack.pop() >> stack.pop()),
+    ':': lambda stack: stack.push(stack.peek()),
+    '<': lambda stack: stack.push(stack.pop() < stack.pop()),
+    '>': lambda stack: stack.push(stack.pop() > stack.pop()),
+    '=': lambda stack: stack.push(stack.pop() == stack.pop())
 }
 
 class UnknownCommand(Exception):
@@ -76,8 +86,8 @@ def tokenize(code):
     Token = collections.namedtuple('Token', ['type', 'value'])
 
     token_specs = [
+        ('string', r'"([^\\]|\\[\s\S])*?"'),
         ('number', r'-?\d+(\.\d*)?'),
-        ('string', r'(?P<q>[\'"])([^\\]|\\[\s\S])*?(?P=q)'),
         ('noop', r'[ \t\n]+'),
         ('command', r'.')
     ]
