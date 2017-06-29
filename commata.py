@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Creative Name
+,,, (Commata)
 
 A language that probably hopefully does something.
 
@@ -31,6 +31,8 @@ commands = {
     lambda stacks, stk_no, stack: stack.push(stack.pop() * stack.pop()),
     '÷': # division
     lambda stacks, stk_no, stack: stack.push(stack.pop() / stack.pop()),
+    '/': # integer division
+    lambda stacks, stk_no, stack: stack.push(stack.pop() // stack.pop()),
     '%': # modulo or string formatting
     lambda stacks, stk_no, stack: stack.push(stack.pop() % stack.pop()),
     '*': # exponentiation
@@ -196,7 +198,7 @@ def run(code, args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description = 'An interpreter for the Creative Name language.')
+        description = 'An interpreter for the ,,, language.')
     parser.add_argument('file', help = 'program read from script file',
                         type = open)
     parser.add_argument('args', help = 'arguments for the script',
