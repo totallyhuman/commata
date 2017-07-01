@@ -155,6 +155,7 @@ def tokenize(code):
     Token = collections.namedtuple('Token', ['type', 'value'])
 
     token_specs = [
+        ('char', r'\'([^\\]|\\[\s\S])'),
         ('string', r'"([^\\]|\\[\s\S])*?"'),
         ('number', r'-?\d+(\.\d*)?'),
         ('noop', r'[ \t\n]+'),
@@ -201,6 +202,8 @@ def run(code, args):
                 stacks[stk_no].push(float(token[1]))
         elif token[0] == 'string':
             stacks[stk_no].push(token[1][1:-1])
+        elif token[0] == 'char':
+            stacks[stk_no].push(token[1][1:])
         else:
             commands[token[1]](stacks, stk_no, stacks[stk_no])
 
