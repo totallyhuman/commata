@@ -22,6 +22,17 @@ def switch(stacks, stk_no, stack):
     stack.push(a)
     stack.push(b)
 
+def sum_stack(stacks, stk_no, stack):
+    if isinstance(stack.peek(), str):
+        result = ''
+        for i in range(len(stack)):
+            result += str(stack.pop())
+    else:
+        for i in range(len(stack)):
+            result += stack.pop()
+
+    stack.push(result)
+
 commands = {
     '+': # addition or concatenation
     lambda stacks, stk_no, stack: stack.push(stack.pop() + stack.pop()),
@@ -95,7 +106,9 @@ commands = {
     '⇆': # switch last two items
     switch,
     '↔': # reverse the stack
-    lambda stacks, stk_no, stack: stack.reverse()
+    lambda stacks, stk_no, stack: stack.reverse(),
+    '#': # sum the stack
+    sum_stack
 }
 
 class UnknownCommand(Exception):
