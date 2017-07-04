@@ -15,6 +15,7 @@ import collections
 import math
 import re
 
+
 def switch(stacks, stk_no, stack):
     a = stack.pop()
     b = stack.pop()
@@ -22,12 +23,14 @@ def switch(stacks, stk_no, stack):
     stack.push(a)
     stack.push(b)
 
+
 def sum_stack(stacks, stk_no, stack):
     if isinstance(stack.peek(), str):
         result = ''
         for i in range(len(stack)):
             result += str(stack.pop())
     else:
+        result = 0
         for i in range(len(stack)):
             result += stack.pop()
 
@@ -35,19 +38,19 @@ def sum_stack(stacks, stk_no, stack):
 
 commands = {
     '+': # addition or concatenation
-    lambda stacks, stk_no, stack: stack.push(stack.pop() + stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) + stack.pop()),
     '-': # subtraction
-    lambda stacks, stk_no, stack: stack.push(stack.pop() - stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) - stack.pop()),
     '×': # multiplication or string multiplication
-    lambda stacks, stk_no, stack: stack.push(stack.pop() * stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) * stack.pop()),
     '÷': # division
-    lambda stacks, stk_no, stack: stack.push(stack.pop() / stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) / stack.pop()),
     '/': # integer division
-    lambda stacks, stk_no, stack: stack.push(stack.pop() // stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) // stack.pop()),
     '%': # modulo or string formatting
-    lambda stacks, stk_no, stack: stack.push(stack.pop() % stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) % stack.pop()),
     '*': # exponentiation
-    lambda stacks, stk_no, stack: stack.push(stack.pop() ** stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) ** stack.pop()),
     '√': # square root
     lambda stacks, stk_no, stack: stack.push(math.sqrt(stack.pop())),
     '↓': # output
@@ -57,9 +60,9 @@ commands = {
     '¬': # logical NOT
     lambda stacks, stk_no, stack: stack.push(int(not stack.pop())),
     '∧': # logical AND
-    lambda stacks, stk_no, stack: stack.push(int(stack.pop() and stack.pop())),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2) and stack.pop())),
     '∨': # logical OR
-    lambda stacks, stk_no, stack: stack.push(int(stack.pop() or stack.pop())),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2) or stack.pop())),
     'i': # convert to int
     lambda stacks, stk_no, stack: stack.push(int(stack.pop())),
     'f': # convert to float
@@ -71,35 +74,35 @@ commands = {
     'o': # convert character to its ASCII number
     lambda stacks, stk_no, stack: stack.push(ord(stack.pop())),
     '⊢': # slice start of string
-    lambda stacks, stk_no, stack: stack.push(stack.pop()[stack.pop():]),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2)[stack.pop():]),
     '⊣': # slice end of string
-    lambda stacks, stk_no, stack: stack.push(stack.pop()[:stack.pop()]),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2)[:stack.pop()]),
     '⟛': # slice every nth character of string
-    lambda stacks, stk_no, stack: stack.push(stack.pop()[::stack.pop()]),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2)[::stack.pop()]),
     '&': # bitwise AND
-    lambda stacks, stk_no, stack: stack.push(stack.pop() & stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) & stack.pop()),
     '|': # bitwise OR
-    lambda stacks, stk_no, stack: stack.push(stack.pop() | stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) | stack.pop()),
     '^': # bitwise XOR
-    lambda stacks, stk_no, stack: stack.push(stack.pop() ^ stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) ^ stack.pop()),
     '~': # bitwise NOT
     lambda stacks, stk_no, stack: stack.push(~ stack.pop()),
     '«': # bit left shift
-    lambda stacks, stk_no, stack: stack.push(stack.pop() << stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) << stack.pop()),
     '»': # bit right shift
-    lambda stacks, stk_no, stack: stack.push(stack.pop() >> stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) >> stack.pop()),
     ':': # duplicate
     lambda stacks, stk_no, stack: stack.push(stack.peek()),
     '<': # lesser than
-    lambda stacks, stk_no, stack: stack.push(int(stack.pop() < stack.pop())),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2) < stack.pop())),
     '>': # greater than
-    lambda stacks, stk_no, stack: stack.push(int(stack.pop() > stack.pop())),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2) > stack.pop())),
     '=': # equality
-    lambda stacks, stk_no, stack: stack.push(int(stack.pop() == stack.pop())),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2) == stack.pop())),
     '≤': # lesser than or equal to
-    lambda stacks, stk_no, stack: stack.push(int(stack.pop() <= stack.pop())),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2) <= stack.pop())),
     '≥': # greater than or equal to
-    lambda stacks, stk_no, stack: stack.push(int(stack.pop() >= stack.pop())),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2) >= stack.pop())),
     '±': # sign of number
     lambda stacks, stk_no, stack: stack.push(
         (stack.peek() > 0) - (stack.pop() < 0)),
@@ -111,6 +114,7 @@ commands = {
     sum_stack
 }
 
+
 class UnknownCommand(Exception):
     """An Exception that is raised on an invalid command."""
 
@@ -120,7 +124,6 @@ class UnknownCommand(Exception):
 
 
 class Stack:
-
     def __init__(self, items = None):
         if items == None:
             self.items = []
@@ -130,8 +133,11 @@ class Stack:
     def push(self, item):
         self.items.append(item)
 
-    def pop(self):
-        return self.items.pop()
+    def pop(self, index = None):
+        if index == None:
+            return self.items.pop()
+        else:
+            return self.items.pop(index)
 
     def peek(self):
         return self.items[-1]
