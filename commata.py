@@ -110,6 +110,10 @@ commands = {
     switch,
     '↔': # reverse the stack
     lambda stacks, stk_no, stack: stack.reverse(),
+    '↻': # rotate the stack clockwise
+    lambda stacks, stk_no, stack: stack.push(stack.pop(), 0),
+    '↺': # rotate the stack anti-clockwise
+    lambda stacks, stk_no, stack: stack.push(stack.pop(0)),
     '#': # sum the stack
     sum_stack
 }
@@ -130,8 +134,11 @@ class Stack:
         else:
             self.items = items
 
-    def push(self, item):
-        self.items.append(item)
+    def push(self, item, index = None):
+        if index == None:
+            self.items.append(item)
+        else:
+            self.items.insert(index, item)
 
     def pop(self, index = None):
         if index == None:
