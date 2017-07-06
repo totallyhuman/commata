@@ -106,6 +106,8 @@ commands = {
     '±': # sign of number
     lambda stacks, stk_no, stack: stack.push(
         (stack.peek() > 0) - (stack.pop() < 0)),
+    '•': # move nth item to the top
+    lambda stacks, stk_no, stack: stack.push(stack.pop(stack.pop())),
     '⇆': # switch last two items
     switch,
     '↔': # reverse the stack
@@ -114,6 +116,10 @@ commands = {
     lambda stacks, stk_no, stack: stack.push(stack.pop(), 0),
     '↺': # rotate the stack anti-clockwise
     lambda stacks, stk_no, stack: stack.push(stack.pop(0)),
+    '⫰': # minimum of stack
+    lambda stacks, stk_no, stack: stack.push(min(stack.items)),
+    '⫯': # maximum of stack
+    lambda stacks, stk_no, stack: stack.push(max(stack.items)),
     '#': # sum the stack
     sum_stack
 }
@@ -146,8 +152,11 @@ class Stack:
         else:
             return self.items.pop(index)
 
-    def peek(self):
-        return self.items[-1]
+    def peek(self, index = None):
+        if index == None:
+            return self.items[-1]
+        else:
+            return self.items[index]
 
     def reverse(self):
         self.items = self.items[::-1]
