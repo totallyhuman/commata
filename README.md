@@ -10,14 +10,14 @@ It was really only made because the creator really wanted to make a language. Ho
 
 ## How do I use it?
 
-The ,,, interpreter is designed for Python 3 and might break in Python 2. The only file required is [commata.py](commata.py). To run:
+The ,,, interpreter is designed for Python 3 and might break in Python 2. Usage:
 
-    commata.py [-h] file args
-    
+    commata [-h] file args
+
     Positional arguments:
       file        program read from script file
       args        arguments for the script
-    
+
     Optional arguments:
       -h, --help  show this help message and exit
 
