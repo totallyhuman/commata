@@ -10,10 +10,49 @@ Sumant Bhaskaruni
 v0.2.0 (basically, don't use it)
 """
 
+import ast
 import argparse
 import collections
 import math
 import re
+
+
+def lit_eval(x):
+    return ast.literal_eval(str(x))
+
+
+def is_prime(n):
+    if n == 2:
+        return 1
+    if n == 3:
+        return 1
+    if n % 2 == 0:
+        return 0
+    if n % 3 == 0:
+        return 0
+
+    i = 5
+    w = 2
+
+    while i * i <= n:
+        if n % i == 0:
+            return 0
+
+        i += w
+        w = 6 - w
+
+    return 1
+
+
+def product_stack(stacks, stk_no, stack):
+    if isinstance(stack.peek(), str):
+        result = ''
+        for i in range(len(stack)):
+            result *= int(stack.pop())
+    else:
+        result = 0
+        for i in range(len(stack)):
+            result *= lit_eval(stack.pop())
 
 
 def switch(stacks, stk_no, stack):
@@ -32,7 +71,7 @@ def sum_stack(stacks, stk_no, stack):
     else:
         result = 0
         for i in range(len(stack)):
-            result += stack.pop()
+            result += lit_eval(stack.pop())
 
     stack.push(result)
 
@@ -40,19 +79,19 @@ commands = {
     '+': # addition or concatenation
     lambda stacks, stk_no, stack: stack.push(stack.pop(-2) + stack.pop()),
     '-': # subtraction
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) - stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(lit_eval(stack.pop(-2)) - lit_eval(stack.pop())),
     '×': # multiplication or string multiplication
     lambda stacks, stk_no, stack: stack.push(stack.pop(-2) * stack.pop()),
     '÷': # division
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) / stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(lit_eval(stack.pop(-2)) / lit_eval(stack.pop())),
     '/': # integer division
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) // stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(lit_eval(stack.pop(-2)) // lit_eval(stack.pop())),
     '%': # modulo or string formatting
     lambda stacks, stk_no, stack: stack.push(stack.pop(-2) % stack.pop()),
     '*': # exponentiation
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) ** stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(lit_eval(stack.pop(-2)) ** lit_eval(stack.pop())),
     '√': # square root
-    lambda stacks, stk_no, stack: stack.push(math.sqrt(stack.pop())),
+    lambda stacks, stk_no, stack: stack.push(math.sqrt(lit_eval(stack.pop()))),
     '↓': # output
     lambda stacks, stk_no, stack: print(stack.pop(), end = ''),
     '↑': # pop
@@ -73,24 +112,26 @@ commands = {
     lambda stacks, stk_no, stack: stack.push(chr(stack.pop())),
     'o': # convert character to its ASCII number
     lambda stacks, stk_no, stack: stack.push(ord(stack.pop())),
+    '🀱': # nth character of string
+    lambda stacks, stk_no, stack: stack.push(str(stack.pop(-2))[int(stack.pop())]),
     '⊢': # slice start of string
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2)[stack.pop():]),
+    lambda stacks, stk_no, stack: stack.push(str(stack.pop(-2))[int(stack.pop()):]),
     '⊣': # slice end of string
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2)[:stack.pop()]),
+    lambda stacks, stk_no, stack: stack.push(str(stack.pop(-2))[:int(stack.pop())]),
     '⟛': # slice every nth character of string
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2)[::stack.pop()]),
+    lambda stacks, stk_no, stack: stack.push(str(stack.pop(-2))[::int(stack.pop())]),
     '&': # bitwise AND
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) & stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2)) & int(stack.pop())),
     '|': # bitwise OR
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) | stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2)) | int(stack.pop())),
     '^': # bitwise XOR
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) ^ stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2)) ^ int(stack.pop())),
     '~': # bitwise NOT
-    lambda stacks, stk_no, stack: stack.push(~ stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(~ int(stack.pop())),
     '«': # bit left shift
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) << stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2)) << int(stack.pop())),
     '»': # bit right shift
-    lambda stacks, stk_no, stack: stack.push(stack.pop(-2) >> stack.pop()),
+    lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2)) >> int(stack.pop())),
     ':': # duplicate
     lambda stacks, stk_no, stack: stack.push(stack.peek()),
     '<': # lesser than
@@ -106,6 +147,10 @@ commands = {
     '±': # sign of number
     lambda stacks, stk_no, stack: stack.push(
         (stack.peek() > 0) - (stack.pop() < 0)),
+    '|': # absolute value
+    lambda stacks, stk_no, stack: stack.push(abs(stack.pop())),
+    'p': # primality test
+    lambda stacks, stk_no, stack: stack.push(is_prime(lit_eval(stack.pop()))),
     '•': # move nth item to the top
     lambda stacks, stk_no, stack: stack.push(stack.pop(stack.pop())),
     '⇆': # switch last two items
@@ -121,7 +166,9 @@ commands = {
     '⫯': # maximum of stack
     lambda stacks, stk_no, stack: stack.push(max(stack.items)),
     '#': # sum the stack
-    sum_stack
+    sum_stack,
+    '⨳': # product of the stack
+    product_stack
 }
 
 
@@ -209,23 +256,15 @@ def run(code, args):
     stk_no = 0
 
     for arg in args:
-        if re.match(r'-?\d+$', arg):
-            stacks[stk_no].push(int(arg))
-        elif re.match(r'-?\d+(\.\d*)?$', arg):
-            stacks[stk_no].push(float(arg))
-        else:
-            stacks[stk_no].push(arg)
+        stacks[stk_no].push(lit_eval(arg))
 
     for token in tokens:
         if token[0] == 'number':
-            try:
-                stacks[stk_no].push(int(token[1]))
-            except ValueError:
-                stacks[stk_no].push(float(token[1]))
+            stacks[stk_no].push(lit_eval(token[1]))
         elif token[0] == 'string':
-            stacks[stk_no].push(token[1][1:-1])
+            stacks[stk_no].push(lit_eval(token[1]))
         elif token[0] == 'char':
-            stacks[stk_no].push(token[1][1:])
+            stacks[stk_no].push(lit_eval(token[1]+"'"))
         else:
             commands[token[1]](stacks, stk_no, stacks[stk_no])
 
