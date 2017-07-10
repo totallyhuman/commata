@@ -34,30 +34,31 @@ def is_prime(n):
 def product_stack(stacks, stk_no, stack):
     if isinstance(stack.peek(), str):
         result = ''
-        for i in range(len(stack)):
+        for _ in range(len(stack)):
             result *= int(stack.pop())
     else:
         result = 0
-        for i in range(len(stack)):
+        for _ in range(len(stack)):
             result *= lit_eval(stack.pop())
 
 
-def switch(stacks, stk_no, stack):
-    a = stack.pop()
-    b = stack.pop()
-
-    stack.push(a)
-    stack.push(b)
+def primes(n):
+    result = set()
+    for i in range(1, int(n ** 0.5) + 1):
+        div, mod = divmod(n, i)
+        if mod == 0:
+            result |= {i, div}
+    return sorted(result)
 
 
 def sum_stack(stacks, stk_no, stack):
     if isinstance(stack.peek(), str):
         result = ''
-        for i in range(len(stack)):
+        for _ in range(len(stack)):
             result += str(stack.pop())
     else:
         result = 0
-        for i in range(len(stack)):
+        for _ in range(len(stack)):
             result += lit_eval(stack.pop())
 
     stack.push(result)
@@ -138,10 +139,14 @@ commands = {
     lambda stacks, stk_no, stack: stack.push(abs(stack.pop())),
     'p': # primality test
     lambda stacks, stk_no, stack: stack.push(is_prime(lit_eval(stack.pop()))),
+    'P': # prime factorization
+    lambda stacks, stk_no, stack: [stack.push(i) for i in primes(stack.pop())],
+    'œ': # parity test, 1 if odd, 0 if even
+    lambda stacks, stk_no, stack: stack.push(lit_eval(stack.pop()) % 2),
     '•': # move nth item to the top
     lambda stacks, stk_no, stack: stack.push(stack.pop(stack.pop())),
     '⇆': # switch last two items
-    switch,
+    lambda stacks, stk_no, stack: stack.push(stack.pop(-1)),
     '↔': # reverse the stack
     lambda stacks, stk_no, stack: stack.reverse(),
     '↻': # rotate the stack clockwise

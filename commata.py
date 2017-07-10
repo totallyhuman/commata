@@ -45,6 +45,12 @@ class Stack:
     def __len__(self):
         return len(self.items)
 
+    def __contains__(self, item):
+        return item in self.items
+
+    def __iter__(self):
+        return (self.pop(0) for i in range(len(self)))
+
 
 def run(code, args):
     tokens = tokenizer.tokenize(code)
