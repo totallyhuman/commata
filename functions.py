@@ -63,6 +63,18 @@ def sum_stack(stacks, stk_no, stack):
 
     stack.push(result)
 
+def to_base(n, base):
+    if n == 0:
+        return 0
+
+    digits = []
+
+    while n:
+        digits.append(int(n % base))
+        n /= base
+
+    return sum(digits)
+
 commands = {
     '+': # addition or concatenation
     lambda stacks, stk_no, stack: stack.push(stack.pop(-2) + stack.pop()),
@@ -100,6 +112,8 @@ commands = {
     lambda stacks, stk_no, stack: stack.push(chr(stack.pop())),
     'o': # convert character to its ASCII number
     lambda stacks, stk_no, stack: stack.push(ord(stack.pop())),
+    'b': # conver number to base
+    lambda stacks, stk_no, stack: stack.push(to_base(stack.pop(-2), stack.pop())),
     '🀱': # nth character of string
     lambda stacks, stk_no, stack: stack.push(str(stack.pop(-2))[int(stack.pop())]),
     '⊢': # slice start of string
