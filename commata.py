@@ -64,9 +64,9 @@ def run(code, args):
         if token[0] == 'number':
             stacks[stk_no].push(functions.lit_eval(token[1]))
         elif token[0] == 'string':
-            stacks[stk_no].push(functions.lit_eval(token[1]))
+            stacks[stk_no].push(functions.lit_eval(token[1][1:-1]))
         elif token[0] == 'char':
-            stacks[stk_no].push(functions.lit_eval(token[1]+"'"))
+            stacks[stk_no].push(functions.lit_eval(token[1][1:]))
         else:
             functions.commands[token[1]](stacks, stk_no, stacks[stk_no])
 

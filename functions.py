@@ -5,7 +5,7 @@ import ast
 import math
 
 def lit_eval(x):
-    return ast.literal_eval(str(x))
+    return ast.literal_eval(str(repr(x)))
 
 
 def is_prime(n):
