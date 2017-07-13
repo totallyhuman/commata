@@ -3,9 +3,13 @@
 
 import ast
 import math
+import re
 
 def lit_eval(x):
-    return ast.literal_eval(str(repr(x)))
+    if re.match(r'-?\d+(\.\d*)?', x):
+        return float(x)
+
+    return ast.literal_eval(repr(x))
 
 
 def is_prime(n):
@@ -92,6 +96,8 @@ commands = {
     lambda stacks, stk_no, stack: stack.push(lit_eval(stack.pop(-2)) ** lit_eval(stack.pop())),
     '√': # square root
     lambda stacks, stk_no, stack: stack.push(math.sqrt(lit_eval(stack.pop()))),
+    '_': # negate
+    lambda stacks, stk_no, stack: stack.push(0 - lit_eval(stack.pop())),
     '↓': # output
     lambda stacks, stk_no, stack: print(stack.pop(), end = ''),
     '↑': # pop
