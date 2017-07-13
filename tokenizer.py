@@ -22,6 +22,7 @@ def tokenize(code):
     token_specs = [
         ('char', r'\'([^\\]|\\[\s\S])'),
         ('string', r'"([^\\]|\\[\s\S])*?"'),
+        ('comment', r'###.*\n'),
         ('number', r'-?\d+(\.\d*)?'),
         ('noop', r'[ \t\n]+'),
         ('command', r'.')
@@ -33,7 +34,7 @@ def tokenize(code):
         _type = token.lastgroup
         value = token.group(_type)
 
-        if _type == 'noop':
+        if _type == 'noop' or _type == 'comment':
             pass
         elif _type == 'command':
             if value in functions.commands:
