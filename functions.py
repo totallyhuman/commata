@@ -120,6 +120,8 @@ commands = {
     lambda stacks, stk_no, stack: stack.push(ord(stack.pop())),
     'b': # conver number to base
     lambda stacks, stk_no, stack: stack.push(to_base(stack.pop(-2), stack.pop())),
+    'B': # convert integer to binary
+    lambda stacks, stk_no, stack: stack.push(bin(int(stack.pop()))[2:]),
     '🀱': # nth character of string
     lambda stacks, stk_no, stack: stack.push(str(stack.pop(-2))[int(stack.pop())]),
     '⊢': # slice start of string
@@ -128,6 +130,8 @@ commands = {
     lambda stacks, stk_no, stack: stack.push(str(stack.pop(-2))[:int(stack.pop())]),
     '⟛': # slice every nth character of string
     lambda stacks, stk_no, stack: stack.push(str(stack.pop(-2))[::int(stack.pop())]),
+    '⍷': # count instances of x in y
+    lambda stacks, stk_no, stack: stack.push(str(stack.pop(-2)).count(str(stack.pop()))),
     '&': # bitwise AND
     lambda stacks, stk_no, stack: stack.push(int(stack.pop(-2)) & int(stack.pop())),
     '|': # bitwise OR
@@ -177,7 +181,7 @@ commands = {
     lambda stacks, stk_no, stack: stack.push(min(stack.items)),
     '⫯': # maximum of stack
     lambda stacks, stk_no, stack: stack.push(max(stack.items)),
-    '#': # sum the stack
+    'Σ': # sum the stack
     sum_stack,
     '⨳': # product of the stack
     product_stack
