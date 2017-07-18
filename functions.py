@@ -115,7 +115,7 @@ commands = {
     's': # convert to string
     lambda stacks, stk_no, stack: stack.push(str(stack.pop())),
     'c': # convert number to its ASCII character
-    lambda stacks, stk_no, stack: stack.push(chr(stack.pop())),
+    lambda stacks, stk_no, stack: stack.push(chr(int(stack.pop()))),
     'o': # convert character to its ASCII number
     lambda stacks, stk_no, stack: stack.push(ord(stack.pop())),
     'b': # conver number to base
