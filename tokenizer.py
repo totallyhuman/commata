@@ -21,7 +21,7 @@ def tokenize(code):
 
     token_specs = [
         ('char', r'\'([^\\]|\\[\s\S])'),
-        ('string', r'"([^\\]|\\[\s\S])*?"'),
+        ('string', r'"([^\\]|\\[\s\S])+"?'),
         ('comment', r'###.*\n'),
         ('number', r'-?\d+(\.\d*)?'),
         ('noop', r'[ \t\n]+'),

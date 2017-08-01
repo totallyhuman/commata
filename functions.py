@@ -168,7 +168,7 @@ commands = {
     'œ': # parity test, 1 if odd, 0 if even
     lambda stacks, stk_no, stack: stack.push(lit_eval(stack.pop()) % 2),
     '•': # move nth item to the top
-    lambda stacks, stk_no, stack: stack.push(stack.pop(stack.pop())),
+    lambda stacks, stk_no, stack: stack.push(stack.pop(int(stack.pop()))),
     '⇆': # switch last two items
     lambda stacks, stk_no, stack: stack.push(stack.pop(-1)),
     '↔': # reverse the stack
